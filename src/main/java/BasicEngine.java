@@ -1,14 +1,14 @@
 import Exceptions.CurrentElementNullException;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.events.WebDriverEventListener;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -60,6 +60,7 @@ public class BasicEngine {
      */
     public BasicEngine(EventFiringWebDriver driver, WebDriverEventListener eventListener) {
         this.driver = driver;
+        this.driver.register(eventListener);
         this.driver.manage().window().maximize();
         this.driver.manage().timeouts().implicitlyWait(0,TimeUnit.SECONDS);
     }
@@ -166,7 +167,10 @@ public class BasicEngine {
         return this;
     }
 
-    public BasicEngine goQuite(long time){
+    /*
+    *
+    * **/
+    public BasicEngine pause(long time){
         try {
             Thread.currentThread().sleep(time*1000);
         }catch (Exception e){
@@ -188,6 +192,12 @@ public class BasicEngine {
     }
 
 
+    public BasicEngine takesScreenshot() throws IOException {
+        File scrFile =((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        System.out.println("Copy File to "+ System.currentTimeMillis()+".png");
+        FileUtils.copyFile(scrFile,new File("./"+System.currentTimeMillis()+".png"));
+        return this;
+    }
 
 
 

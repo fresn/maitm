@@ -21,11 +21,11 @@ public class EventL implements WebDriverEventListener {
     }
 
     public void beforeNavigateTo(String url, WebDriver driver) {
-
+        System.out.println("beforeNavigateTo: "+url);
     }
 
     public void afterNavigateTo(String url, WebDriver driver) {
-
+        System.out.println("afterNavigateTo: "+url);
     }
 
     public void beforeNavigateBack(WebDriver driver) {
@@ -53,19 +53,19 @@ public class EventL implements WebDriverEventListener {
     }
 
     public void beforeFindBy(By by, WebElement element, WebDriver driver) {
-
+        System.out.println("beforeFindBy: ");
     }
 
     public void afterFindBy(By by, WebElement element, WebDriver driver) {
-
+        System.out.println("afterFindBy:");
     }
 
     public void beforeClickOn(WebElement element, WebDriver driver) {
-
+        System.out.println("beforeClickOn: ");
     }
 
     public void afterClickOn(WebElement element, WebDriver driver) {
-
+        System.out.println("afterClickOn: ");
     }
 
     public void beforeChangeValueOf(WebElement element, WebDriver driver, CharSequence[] keysToSend) {

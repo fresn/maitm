@@ -1,17 +1,19 @@
+import com.sun.rowset.internal.WebRowSetXmlReader;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
+import java.io.IOException;
+
 public class BasicEngineTest {
-    private String username="";
-    private String password="";
-    private  BasicEngine engine;
+    private String username = "";
+    private String password = "";
+    private BasicEngine engine;
+
     @Before
-    public  void  init(){
-        this.engine= new BasicEngine(new EventFiringWebDriver(new ChromeDriver()),new EventL());
+    public void init() {
+        this.engine = new BasicEngine(new EventFiringWebDriver(new ChromeDriver()), new EventL());
     }
 
     @Test
@@ -47,37 +49,46 @@ public class BasicEngineTest {
     }
 
     @Test
-    public void basicTest(){
-        engine.page("https://www.google.ca","google home")
+    public void basicTest() throws IOException {
+        engine.page("https://www.google.ca", "google home")
                 .element("//*[@id=\"gb_70\"]")
                 .click()
-                .waitForElement(10L,"//*[@id=\"identifierId\"]")
+                .waitForElement(10L, "//*[@id=\"identifierId\"]")
+                .takesScreenshot()
                 .sendValue(username)
                 .sendEnter()
-                .waitForElement(10L,"//*[@id=\"password\"]/div[1]/div/div[1]/input")
+                .waitForElement(10L, "//*[@id=\"password\"]/div[1]/div/div[1]/input")
                 .sendValue(password)
+                .takesScreenshot()
                 .sendEnter()
-                .waitForElement(10L,"//*[@id=\"gsr\"]")
+                .waitForElement(10L, "//*[@id=\"gsr\"]")
                 .click()
-                .waitForElement(10L,"//*[@id=\"gb_71\"]")
+                .waitForElement(10L, "//*[@id=\"gb_71\"]")
                 .click()
-                .goQuite(10)
+                .pause(10)
                 .close()
                 .quit();
     }
 
     @Test
-    public void  confluenceTest(){
-        engine.page("http://confluence/","confluence")
-                .element("/html//a[@id='login-link']")
-                .click()
-                .waitForElement(10L,"/html//form[@action='/dologin.action']//input[@placeholder='Username']")
-                .sendValue("")
-                .waitForElement(10L,"/html//form[@action='/dologin.action']//input[@placeholder='Password']")
-                .sendValue("")
-                .waitForElement(10L,"/html//form[@action='/dologin.action']//input[@type='submit']")
-                .click()
-                .goQuite(10)
-                .quit();
+    public void confluenceTest() throws IOException {
+        try {
+            engine.page("http://confluence/", "confluence")
+                    .element("/html//a[@id='login-link']")
+                    .takesScreenshot()
+                    .click()
+                    .waitForElement(10L, "/html//form[@action='/dologin.action']//input[@placeholder='Username']")
+                    .sendValue("ianma")
+                    .waitForElement(10L, "/html//form[@action='/dologin.action']//input[@placeholder='Password']")
+                    .sendValue("Adm123x+")
+                    .takesScreenshot()
+                    .waitForElement(10L, "/html//form[@action='/dologin.action']//input[@type='submit']")
+                    .click()
+                    .pause(10)
+                    .quit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
