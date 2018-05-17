@@ -4,9 +4,9 @@ import org.openqa.selenium.support.events.WebDriverEventListener;
 
 public interface IEventListeners extends WebDriverEventListener {
 
-    void BeforeStep();
+    void BeforeStep(IStep step);
 
-    void AfterStep();
+    void AfterStep(IStep step);
 
 
 }

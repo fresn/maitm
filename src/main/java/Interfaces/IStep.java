@@ -8,8 +8,6 @@ public interface IStep {
 
     String getStepLogMessage();
 
-    void StepStart();
-
     void StepEnd();
 
 }
