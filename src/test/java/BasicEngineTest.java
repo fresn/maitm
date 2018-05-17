@@ -1,10 +1,6 @@
-import com.sun.rowset.internal.WebRowSetXmlReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-
-import java.io.IOException;
 
 public class BasicEngineTest {
     private String username = "";
@@ -12,45 +8,15 @@ public class BasicEngineTest {
     private BasicEngine engine;
 
     @Before
-    public void init() {
+    public void init() throws NoSuchMethodException {
+
         this.engine = new BasicEngine(new EventFiringWebDriver(new ChromeDriver()), new EventL());
     }
 
-//    @Test
-//    public void page() {
-//    }
-//
-//    @Test
-//    public void page1() {
-//    }
-//
-//    @Test
-//    public void element() {
-//    }
-//
-//    @Test
-//    public void waitForElement() {
-//    }
-//
-//    @Test
-//    public void click() {
-//    }
-//
-//    @Test
-//    public void enter() {
-//    }
-//
-//    @Test
-//    public void close() {
-//    }
-//
-//    @Test
-//    public void quit() {
-//    }
-
     @Test
-    public void confluenceTest() throws IOException {
+    public void confluenceTest() {
         try {
+
             engine.page("http://confluence/", "confluence")
                     .element("/html//a[@id='login-link']")
                     .takesScreenshot()
@@ -62,11 +28,15 @@ public class BasicEngineTest {
                     .takesScreenshot()
                     .waitForElement(10L, "/html//form[@action='/dologin.action']//input[@type='submit']")
                     .click()
-                    .pause(10)
-                    .quit();
+                    .pause(3L)
+                    .testTrue();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    @After
+    public void finala() {
+        engine.close().quit();
     }
 }

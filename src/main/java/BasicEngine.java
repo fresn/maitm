@@ -3,14 +3,12 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.events.WebDriverEventListener;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -51,6 +49,10 @@ public class BasicEngine {
     private WebElement currentElement;
 
 
+    public boolean testTrue() {
+        return true;
+    }
+
     /**
      * Contractor
      *
@@ -83,6 +85,7 @@ public class BasicEngine {
         //return self to keep transaction
         return this;
     }
+
 
     /**
      * todo write docs
@@ -194,8 +197,8 @@ public class BasicEngine {
 
     public BasicEngine takesScreenshot() throws IOException {
         File scrFile =((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        System.out.println("Copy File to "+ System.currentTimeMillis()+".png");
-        FileUtils.copyFile(scrFile,new File("./"+System.currentTimeMillis()+".png"));
+        System.out.println("Copy File to " + System.getProperty("java.io.tmpdir") + System.currentTimeMillis() + ".png");
+        FileUtils.copyFile(scrFile, new File(System.getProperty("java.io.tmpdir") + System.currentTimeMillis() + ".png"));
         return this;
     }
 
