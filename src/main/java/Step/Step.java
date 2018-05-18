@@ -7,11 +7,13 @@ public class Step implements IStep {
     private IEventListeners listeners;
     private String name;
 
+
     public Step(String stepName, IEventListeners listeners) {
+        this.name = stepName;
         this.listeners = listeners;
         this.listeners.BeforeStep(this);
-        this.name = stepName;
     }
+
 
     public String GetStepName() {
         return this.name;
@@ -24,6 +26,7 @@ public class Step implements IStep {
     public String getStepLogMessage() {
         return null;
     }
+
 
     public void StepEnd() {
         listeners.AfterStep(this);

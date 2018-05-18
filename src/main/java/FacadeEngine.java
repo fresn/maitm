@@ -1,9 +1,9 @@
-import Annotations.AitStep;
 import Enums.WebDriverType;
 import Events.WebEventListeners;
+import Interfaces.Engine.Components.IStepActions;
 import Interfaces.IEventListeners;
 import Interfaces.IStep;
-import Interfaces.IStepFullWebEngine;
+import Interfaces.Engine.IStepFullWebEngine;
 import Step.Step;
 
 import java.lang.reflect.InvocationHandler;
@@ -51,21 +51,31 @@ public class FacadeEngine {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             IStep currentStep = null;
             //if method have a @AitStep Annotation
-            if (method.isAnnotationPresent(AitStep.class)) {
-                steps.add(new Step(method.getAnnotation(AitStep.class).StepName(), this.listeners));
+
+            for (Method m : IStepActions.class.getMethods()) {
+                if (m.equals(method)) {
+                    System.out.println("m : " + m.getName());
+                    currentStep = new Step(Long.toString(System.currentTimeMillis()), this.listeners);
+                    steps.add(currentStep);
+                }
             }
-            System.out.println("before method " + method.getName());
+
+
             Object o = method.invoke(webEngine, args);
+
 
             //end step
             if (currentStep != null) {
                 currentStep.StepEnd();
             }
 
-            System.out.println(o.getClass().toString());
-            if(o.getClass().equals(StepFullWebEngine.class)){
+            if (null == o) {
+                return null;
+            } else if (o.getClass().equals(StepFullWebEngine.class)) {
                 return proxy;
-            }else return o;
+            } else {
+                return o;
+            }
         }
     }
 }

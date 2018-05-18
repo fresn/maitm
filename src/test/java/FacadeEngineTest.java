@@ -1,12 +1,10 @@
 import Enums.WebDriverType;
 import Events.WebEventListeners;
 import Interfaces.IStep;
-import Interfaces.IStepFullWebEngine;
+import Interfaces.Engine.IStepFullWebEngine;
 import org.junit.Test;
 
 import java.util.ArrayList;
-
-import static org.junit.Assert.*;
 
 public class FacadeEngineTest {
     @Test

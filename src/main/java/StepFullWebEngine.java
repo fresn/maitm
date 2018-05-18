@@ -1,8 +1,7 @@
-import Annotations.AitStep;
 import Enums.WebDriverType;
 import Interfaces.IEventListeners;
 import Interfaces.IStep;
-import Interfaces.IStepFullWebEngine;
+import Interfaces.Engine.IStepFullWebEngine;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoSuchElementException;
@@ -61,7 +60,6 @@ public class StepFullWebEngine implements IStepFullWebEngine {
         return this;
     }
 
-    @AitStep(StepName = "openPage")
     public IStepFullWebEngine openPage(String url) {
         try {
             driver.get(url);
