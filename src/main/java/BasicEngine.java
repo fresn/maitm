@@ -1,4 +1,4 @@
-import Exceptions.CurrentElementNullException;
+import Exceptions.NoneElementException;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
@@ -132,9 +132,9 @@ public class BasicEngine {
             if(currentElement!=null){
                 currentElement.click();
             }else {
-                throw new CurrentElementNullException();
+                throw new NoneElementException();
             }
-        }catch (CurrentElementNullException e) {
+        } catch (NoneElementException e) {
             e.printStackTrace();
         }
 
@@ -147,9 +147,9 @@ public class BasicEngine {
             if(currentElement!=null){
                 currentElement.sendKeys(Keys.ENTER);
             }else {
-                throw new CurrentElementNullException();
+                throw new NoneElementException();
             }
-        }catch (CurrentElementNullException e) {
+        } catch (NoneElementException e) {
             e.printStackTrace();
         }
 
@@ -161,7 +161,7 @@ public class BasicEngine {
             if(currentElement!=null){
                 currentElement.sendKeys(value);
             }else {
-                throw new CurrentElementNullException();
+                throw new NoneElementException();
             }
         }catch (Exception e) {
             e.printStackTrace();
