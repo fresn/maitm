@@ -14,9 +14,8 @@ public class FacadeEngineTest {
         IStepFullWebEngine drive = (new FacadeEngine()).getEngine();
 
         drive.openPage("http://confluence")
-                .waitForElementPresent("//*[@id=\"login-link\"]", 10L, "gaga")
-                .sleep(2L)
-                .closePage()
+                .openPage("http://google.com")
+                .openPage("http://amazon.ca")
                 .quit();
 
     }

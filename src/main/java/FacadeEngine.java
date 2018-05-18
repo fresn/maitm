@@ -61,7 +61,11 @@ public class FacadeEngine {
             if (currentStep != null) {
                 currentStep.StepEnd();
             }
-            return o;
+
+            System.out.println(o.getClass().toString());
+            if(o.getClass().equals(StepFullWebEngine.class)){
+                return proxy;
+            }else return o;
         }
     }
 }
