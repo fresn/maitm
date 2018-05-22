@@ -2,28 +2,43 @@ package Interfaces.Engine.Components;
 
 import Exceptions.*;
 import Interfaces.Engine.IStepFullWebEngine;
+import Interfaces.IStep;
 import Step.Step;
 
 public interface IStepActions {
 
-    IStepFullWebEngine openPage(String url, String stepName);
+    IStepFullWebEngine openPage(String url, String stepName) throws Exception;
 
-    IStepFullWebEngine click(String stepName) throws NoneWindowOpenException, NoneElementException, ElementUnClickAbleException;
+    IStepFullWebEngine click(String stepName) throws Exception;
 
-    IStepFullWebEngine closePage();
+    IStepFullWebEngine closePage(String stepName) throws Exception;
 
-    IStepFullWebEngine sleep(long time, String stepName);
+    IStepFullWebEngine sleep(long waitTime, String stepName) throws Exception;
 
-    IStepFullWebEngine waitForElementPresent(Long waitingTime, String xPath, String stepName) throws TimeOutException, InvalidatedXPathException, NoneElementException;
+    IStepFullWebEngine waitForElementPresent(String xPath, String stepName) throws Exception;
 
-    IStepFullWebEngine waitForElementPresentAndClick(Long waitingTime, String xPath, String stepName) throws ElementUnClickAbleException, NoneElementException, NoneWindowOpenException, InvalidatedXPathException, TimeOutException;
+    IStepFullWebEngine waitForElementPresent(Long waitingTime, String xPath, String stepName) throws Exception;
 
-    IStepFullWebEngine waitForElementPresentAndClick(Long waitingTime, Long sleepingTime, String xPath, String stepName) throws ElementUnClickAbleException, NoneElementException, NoneWindowOpenException, InvalidatedXPathException, TimeOutException;
+    IStepFullWebEngine waitForElementPresentAndClick(String xPath, String stepName) throws Exception;
 
-    IStepFullWebEngine waitForElementPresentAndSendKeys(Long waitingTime, String xPath, CharSequence keys, String stepName) throws NoneKeyException, NoneElementException, NoneWindowOpenException, InvalidatedXPathException, TimeOutException, ElementUnClickAbleException;
+    IStepFullWebEngine waitForElementPresentAndClick(Long waitingTime, String xPath, String stepName) throws Exception;
 
-    IStepFullWebEngine waitForElementPresentAndSelect(Long waitingTime, String xPath, String value, String stepName) throws TimeOutException, InvalidatedXPathException, NoneElementException, NoneSelectedValueException;
+    IStepFullWebEngine waitForElementPresentAndClick(String xPath, String stepName, Long sleepingTime) throws Exception;
+
+    IStepFullWebEngine waitForElementPresentAndClick(Long waitingTime, String xPath, String stepName, Long sleepingTime) throws Exception;
+
+    IStepFullWebEngine waitForElementPresentAndSendKeys(String xPath, CharSequence keys, String stepName) throws Exception;
+
+    IStepFullWebEngine waitForElementPresentAndSendKeys(Long waitingTime, String xPath, CharSequence keys, String stepName) throws Exception;
+
+    IStepFullWebEngine waitForElementPresentAndSelect(String xPath, String selectValue, String stepName) throws Exception, NoneSelectedValueException;
+
+    IStepFullWebEngine waitForElementPresentAndSelect(Long waitingTime, String xPath, String selectValue, String stepName) throws Exception, NoneSelectedValueException;
 
 
-    void quit();
+    String waitForElementPresentAndGetText(String xPath, String stepName) throws Exception;
+
+    String waitForElementPresentAndGetText(Long WaitingTime, String xPath, String stepName) throws Exception;
+
+
 }

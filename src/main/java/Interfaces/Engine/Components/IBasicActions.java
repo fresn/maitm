@@ -1,19 +1,19 @@
 package Interfaces.Engine.Components;
 
 import Exceptions.*;
-import Interfaces.Engine.IStepFullWebEngine;
-import Interfaces.IStep;
 
 public interface IBasicActions {
 
-    IStepFullWebEngine openPage(String url);
+    void openPage(String url);
 
-    IStepFullWebEngine click() throws NoneWindowOpenException, NoneElementException, ElementUnClickAbleException;
+    void click() throws NoneWindowOpenException, NoneElementException, ElementUnClickAbleException;
 
-    IStepFullWebEngine sleep(long time);
+    void sleep(long time);
 
-    IStepFullWebEngine waitForElementPresent(long waitTime, String xPath) throws TimeOutException, InvalidatedXPathException, NoneElementException;
+    void waitForElementPresent(long waitTime, String xPath) throws TimeOutException, InvalidatedXPathException, NoneElementException;
 
-    IStepFullWebEngine sendKeys(CharSequence keys) throws NoneWindowOpenException, NoneElementException, NoneKeyException;
+    void sendKeys(CharSequence keys) throws NoneWindowOpenException, NoneElementException, NoneKeyException;
+
+    void quit();
 
 }

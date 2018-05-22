@@ -1,13 +1,18 @@
 package Interfaces;
 
+import Step.StepStatus;
+
 public interface IStep {
 
-    String GetStepName();
+    String getStepName();
 
-    void SetStepLogMessage();
+    StepStatus getState();
 
-    String getStepLogMessage();
+    void popData(String key, Object value);
 
-    void StepEnd();
+    double getRunTime() throws Exception;
 
+    void stepEnd() throws Exception;
+
+    void stepStart();
 }

@@ -1,3 +1,6 @@
+/*
+package Engine;
+
 import Enums.WebDriverType;
 import Exceptions.*;
 import Interfaces.IEventListeners;
@@ -36,23 +39,29 @@ public class StepFullWebEngine implements IStepFullWebEngine {
         this.eventListeners = listeners;
     }
 
-    /**
-     *
-     * */
-    public IStepFullWebEngine setDefaultWaitingTime(long time) {
-
+    public void setDefaultWaitingTime(long time) {
         defaultWaitingTime = time;
-
-        return this;
     }
 
 
     public IStepFullWebEngine waitForElementPresent(Long waitTime, String xPath, String stepName) throws TimeOutException, InvalidatedXPathException, NoneElementException {
 
-        return waitForElementPresent(waitTime, xPath);
+        waitForElementPresent(waitTime, xPath);
+
+        return this;
+
     }
 
-    public IStepFullWebEngine waitForElementPresent(long waitTime, String xPath) throws TimeOutException, InvalidatedXPathException, NoneElementException {
+    @Override
+    public IStepFullWebEngine waitForElementPresentAndClick(String xPath, String stepName) throws ElementUnClickAbleException, NoneElementException, NoneWindowOpenException, InvalidatedXPathException, TimeOutException {
+
+        waitForElementPresent(defaultWaitingTime, xPath, stepName + "waitForElementPresent");
+        click(stepName + "click");
+
+        return this;
+    }
+
+    public void waitForElementPresent(long waitTime, String xPath) throws TimeOutException, InvalidatedXPathException, NoneElementException {
         try {
             currentElement = new WebDriverWait(driver, waitTime).until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)));
         } catch (TimeoutException e) {
@@ -64,7 +73,6 @@ public class StepFullWebEngine implements IStepFullWebEngine {
         } catch (WebDriverException e) {
             //TODO WebDriverException
         }
-        return this;
     }
 
     public IStepFullWebEngine waitForElementPresentAndClick(Long waitingTime, String xPath, String stepName) throws ElementUnClickAbleException, NoneElementException, NoneWindowOpenException, InvalidatedXPathException, TimeOutException {
@@ -75,10 +83,20 @@ public class StepFullWebEngine implements IStepFullWebEngine {
     }
 
     @Override
-    public IStepFullWebEngine waitForElementPresentAndClick(Long waitingTime, Long sleepingTime, String xPath, String stepName) throws ElementUnClickAbleException, NoneElementException, NoneWindowOpenException, InvalidatedXPathException, TimeOutException {
+    public IStepFullWebEngine waitForElementPresentAndClick(String xPath, String stepName, Long sleepingTime) throws ElementUnClickAbleException, NoneElementException, NoneWindowOpenException, InvalidatedXPathException, TimeOutException {
+        return null;
+    }
+
+    @Override
+    public IStepFullWebEngine waitForElementPresentAndClick(Long waitingTime, String xPath, String stepName, Long sleepingTime) throws ElementUnClickAbleException, NoneElementException, NoneWindowOpenException, InvalidatedXPathException, TimeOutException {
         waitForElementPresentAndClick(waitingTime, xPath, stepName);
         sleep(sleepingTime, stepName + "sleep");
         return this;
+    }
+
+    @Override
+    public IStepFullWebEngine waitForElementPresentAndSendKeys(String xPath, CharSequence keys, String stepName) throws NoneKeyException, NoneElementException, NoneWindowOpenException, InvalidatedXPathException, TimeOutException, ElementUnClickAbleException {
+        return waitForElementPresentAndSendKeys(defaultWaitingTime,xPath,keys,stepName);
     }
 
     public IStepFullWebEngine waitForElementPresentAndSendKeys(Long waitingTime, String xPath, CharSequence keys, String stepName) throws NoneKeyException, NoneElementException, NoneWindowOpenException, InvalidatedXPathException, TimeOutException, ElementUnClickAbleException {
@@ -90,11 +108,16 @@ public class StepFullWebEngine implements IStepFullWebEngine {
         return this;
     }
 
-    public IStepFullWebEngine waitForElementPresentAndSelect(Long waitingTime, String xPath, String selectedValue, String stepName) throws TimeOutException, InvalidatedXPathException, NoneElementException, NoneSelectedValueException {
+    @Override
+    public IStepFullWebEngine waitForElementPresentAndSelect(String xPath, String selectValue, String stepName) throws TimeOutException, InvalidatedXPathException, NoneElementException, NoneSelectedValueException {
+        return waitForElementPresentAndSelect(defaultWaitingTime,xPath,selectValue,stepName);
+    }
+
+    public IStepFullWebEngine waitForElementPresentAndSelect(Long waitingTime, String xPath, String selectValue, String stepName) throws TimeOutException, InvalidatedXPathException, NoneElementException, NoneSelectedValueException {
         waitForElementPresent(waitingTime, xPath, stepName + "waitForElementPresent");
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", currentElement);
         try {
-            (new Select(currentElement)).selectByVisibleText(selectedValue);
+            (new Select(currentElement)).selectByVisibleText(selectValue);
         } catch (NoSuchElementException e) {
             throw new NoneSelectedValueException();
         }
@@ -102,47 +125,64 @@ public class StepFullWebEngine implements IStepFullWebEngine {
         return this;
     }
 
+    @Override
+    public String waitForElementPresentAndGetText(String xPath, String stepName) throws TimeOutException, InvalidatedXPathException, NoneElementException {
+        return waitForElementPresentAndGetText(defaultWaitingTime,xPath,stepName);
+    }
 
-    public IStepFullWebEngine openPage(String url) {
+    @Override
+    public String waitForElementPresentAndGetText(Long WaitingTime, String xPath, String stepName) throws TimeOutException, InvalidatedXPathException, NoneElementException {
+        waitForElementPresent(WaitingTime, xPath, stepName + "waitForElementPresent");
+        return getText();
+    }
+
+
+    public void openPage(String url) {
         try {
             driver.get(url);
         } catch (Exception e) {
             //TODO unhandled Exp
             System.out.println(e.getCause().toString());
         }
-        return this;
     }
 
     public IStepFullWebEngine openPage(String url, String stepName) {
-        return openPage(url);
+        openPage(url);
+        return this;
     }
 
 
-    public IStepFullWebEngine closePage() {
+    public IStepFullWebEngine closePage(String stepName) {
         driver.close();
         return this;
     }
 
-    public IStepFullWebEngine sleep(long time) {
+    public void sleep(long time) {
         try {
             Thread.currentThread().sleep(time * 1000);
         } catch (Exception e) {
             //TODO unhandled Exp
             e.printStackTrace();
         }
-        return this;
     }
 
     public IStepFullWebEngine sleep(long time, String stepName) {
-        return sleep(time);
+        sleep(time);
+        return this;
+    }
+
+    @Override
+    public IStepFullWebEngine waitForElementPresent(String xPath, String stepName) throws TimeOutException, InvalidatedXPathException, NoneElementException {
+        return null;
     }
 
 
     public IStepFullWebEngine click(String stepName) throws NoneElementException, NoneWindowOpenException, ElementUnClickAbleException {
-        return click();
+        click();
+        return this;
     }
 
-    public IStepFullWebEngine click() throws NoneWindowOpenException, NoneElementException, ElementUnClickAbleException {
+    public void click() throws NoneWindowOpenException, NoneElementException, ElementUnClickAbleException {
         if (isWindowOpened()) {
             if (currentElement != null) {
                 if (currentElement.isDisplayed()) {
@@ -156,7 +196,6 @@ public class StepFullWebEngine implements IStepFullWebEngine {
         } else {
             throw new NoneWindowOpenException();
         }
-        return this;
     }
 
 
@@ -199,7 +238,7 @@ public class StepFullWebEngine implements IStepFullWebEngine {
     }
 
 
-    public IStepFullWebEngine sendKeys(CharSequence keys) throws NoneWindowOpenException, NoneElementException, NoneKeyException {
+    public void sendKeys(CharSequence keys) throws NoneWindowOpenException, NoneElementException, NoneKeyException {
         if (isWindowOpened()) {
             if (currentElement != null) {
                 try {
@@ -209,7 +248,7 @@ public class StepFullWebEngine implements IStepFullWebEngine {
                 }
             } else throw new NoneElementException();
         } else throw new NoneWindowOpenException();
-        return this;
+
     }
 
 
@@ -226,4 +265,15 @@ public class StepFullWebEngine implements IStepFullWebEngine {
         }
         return true;
     }
+
+    @Override
+    public String getText() {
+        return currentElement.getText();
+    }
+
+    @Override
+    public String getValue() {
+        return currentElement.getAttribute("value");
+    }
 }
+*/

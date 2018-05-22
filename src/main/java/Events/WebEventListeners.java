@@ -2,17 +2,26 @@ package Events;
 
 import Interfaces.IEventListeners;
 import Interfaces.IStep;
+import Step.DataStorage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class WebEventListeners implements IEventListeners {
+    @Override
     public void BeforeStep(IStep step) {
-        System.out.println("BeforeStep : " + step.GetStepName());
+        System.out.println("[Before Step : " + step.getStepName() + "]");
     }
 
-    public void AfterStep(IStep step) {
-        System.out.println("AfterStep : " + step.GetStepName());
+    @Override
+    public void AfterStep(IStep step) throws Exception {
+        System.out.println("[After Step : " + step.getStepName() + "]");
+        System.out.println("[Step " + step.getStepName() + "] run " + step.getRunTime() + " SECs");
+    }
+
+    @Override
+    public void StepPopData(DataStorage data) {
+        System.out.println("StepPopData" + data.getValue().toString());
     }
 
     public void beforeAlertAccept(WebDriver driver) {
