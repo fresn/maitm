@@ -1,0 +1,22 @@
+{
+  "name": "NetWorkMonitor",
+  "description": "Intercept and record network traffic",
+  "version": "0.1",
+  "permissions": [
+    "debugger"
+  ],
+  "background": {
+    "persistent": true,
+    "scripts": ["background.js"]
+  },
+   "permissions": [
+      "webRequest",
+      "*://*/*"
+  ],
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "NetWorkMonitor"
+  },
+  "manifest_version": 2
+}
+

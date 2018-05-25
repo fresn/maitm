@@ -5,10 +5,52 @@ import Exceptions.*;
 import Interfaces.Engine.Components.IBasicActions;
 import Interfaces.IEventListeners;
 import org.openqa.selenium.*;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Date;
+import java.util.List;
+
 public abstract class BasicEngine extends SettingEngine implements IBasicActions {
+    protected static final String JS_IS_AJAX_TALKING = "return document.getAjaxReadyStatus";
+    protected static final String JS_SETTING_AJAX_Hijacker =
+            "document.AjaxConns = [];\n" +
+                    "document.getAjaxReadyStatus = function () {\n" +
+                    "    var state = false;\n" +
+                    "    document.AjaxConns.forEach(function (value, index) {\n" +
+                    "        if (value.readyState !== 4) {\n" +
+                    "            state = state || true;\n" +
+                    "        }\n" +
+                    "    });\n" +
+                    "    return state;\n" +
+                    "};\n" +
+                    "document.addAjaxConn = function (conn) {\n" +
+                    "    document.AjaxConns.push(conn)\n" +
+                    "};\n" +
+                    "(function (open) {\n" +
+                    "    XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {\n" +
+                    "        document.addAjaxConn(this);\n" +
+                    "        this.addEventListener(\"readystatechange\", function () {\n" +
+                    "            console.log(document.getAjaxReadyStatus());\n" +
+                    "            if(this.readyState===1){\n" +
+                    "                this.StateOPENED=Date.now();\n" +
+                    "            }else if(this.readyState===2){\n" +
+                    "                this.StateHEADERS_RECEIVED=Date.now();\n" +
+                    "            }else if(this.readyState===3){\n" +
+                    "                this.StateLOADING=Date.now();\n" +
+                    "            }else if(this.readyState===4){\n" +
+                    "                this.StateDONE=Date.now();\n" +
+                    "            }\n" +
+                    "        }, false);\n" +
+                    "        open.call(this, method, url, async, user, pass);\n" +
+                    "    };\n" +
+                    "\n" +
+                    "})(XMLHttpRequest.prototype.open);\n" +
+                    "\n";
+
+
 
     public BasicEngine(WebDriverType driverType, IEventListeners listeners) {
         super(driverType, listeners);
@@ -18,6 +60,7 @@ public abstract class BasicEngine extends SettingEngine implements IBasicActions
     public void openPage(String url) {
         try {
             this.driver.get(url);
+            exJs(JS_SETTING_AJAX_Hijacker);
         } catch (Exception e) {
             //TODO unhandled Exp
             System.out.println(e.getCause().toString());
@@ -29,6 +72,11 @@ public abstract class BasicEngine extends SettingEngine implements IBasicActions
         if (isWindowOpened()) {
             if (this.currentElement != null) {
                 if (this.currentElement.isDisplayed()) {
+                    while (true) {
+                        if (exJs("JS_IS_AJAX_TALKING") == "false") {
+                            break;
+                        }
+                    }
                     this.currentElement.click();
                 } else {
                     throw new ElementUnClickAbleException();
@@ -91,5 +139,9 @@ public abstract class BasicEngine extends SettingEngine implements IBasicActions
             return false;
         }
         return true;
+    }
+
+    protected Object exJs(String jsCode) {
+        return (JavascriptExecutor) driver.executeScript(jsCode);
     }
 }
