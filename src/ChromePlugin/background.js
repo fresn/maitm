@@ -38,10 +38,10 @@
 
     chrome.webRequest.onBeforeRequest.addListener(
         function (details) {
-            console.log(details.timeStamp + " : " + details.requestId.toString() + " state open");
+            console.log(Math.round(details.timeStamp) + " : " + details.requestId.toString() + " state open");
             let localConnI = new ConnItem();
             localConnI.requestId = details.requestId.toString();
-            localConnI.timeOpen = details.timeStamp;
+            localConnI.timeOpen = Math.round(details.timeStamp);
             localConnI.Url = details.url;
             document.AjaxConns.push(localConnI);
         }, {urls: []},
@@ -50,23 +50,23 @@
 
     chrome.webRequest.onSendHeaders.addListener(
         function (details) {
-            console.log(details.timeStamp + " : " + details.requestId.toString() + " state sending");
+            console.log(Math.round(details.timeStamp) + " : " + details.requestId.toString() + " state sending");
             document.AjaxConns.find(function (element) {
                 return element.requestId === details.requestId
-            }).timeSendReq = details.timeStamp;
+            }).timeSendReq = Math.round(details.timeStamp);
         }, {urls: []},
         ['requestHeaders']
     );
 
     chrome.webRequest.onBeforeRedirect.addListener(
         function (details) {
-            console.log(details.timeStamp + " : " + details.requestId.toString() + " Redirect to " + details.redirectUrl);
+            console.log(Math.round(details.timeStamp) + " : " + details.requestId.toString() + " Redirect to " + details.redirectUrl);
             document.AjaxConns.find(function (element) {
                 return element.requestId === details.requestId
             }).RedirectUrl = details.redirectUrl;
             document.AjaxConns.find(function (element) {
                 return element.requestId === details.requestId
-            }).timeClose = details.timeStamp;
+            }).timeClose = Math.round(details.timeStamp);
             document.AjaxConns.find(function (element) {
                 return element.requestId === details.requestId
             }).state = details.statusCode
@@ -77,10 +77,10 @@
 
     chrome.webRequest.onResponseStarted.addListener(
         function (details) {
-            console.log(details.timeStamp + " : " + details.requestId.toString() + " state sending");
+            console.log(Math.round(details.timeStamp) + " : " + details.requestId.toString() + " state sending");
             document.AjaxConns.find(function (element) {
                 return element.requestId === details.requestId
-            }).timeRep = details.timeStamp;
+            }).timeRep = Math.round(details.timeStamp);
             document.AjaxConns.find(function (element) {
                 return element.requestId === details.requestId
             }).state = details.statusCode
@@ -89,10 +89,10 @@
 
     chrome.webRequest.onCompleted.addListener(
         function (details) {
-            console.log(details.timeStamp + " : " + details.requestId.toString() + " state completed");
+            console.log(Math.round(details.timeStamp) + " : " + details.requestId.toString() + " state completed");
             document.AjaxConns.find(function (element) {
                 return element.requestId === details.requestId
-            }).timeClose = details.timeStamp;
+            }).timeClose = Math.round(details.timeStamp);
             document.AjaxConns.find(function (element) {
                 return element.requestId === details.requestId
             }).state = details.statusCode
@@ -102,7 +102,11 @@
 
     chrome.webRequest.onErrorOccurred.addListener(
         function (details) {
-            console.log(details.timeStamp + " : " + details.requestId.toString() + " state err");
+            chrome.tabs.get(details.tabId, function (tab) {
+                tab.title
+            });
+
+            console.log(Math.round(details.timeStamp) + " : " + details.requestId.toString() + " state err");
             document.AjaxConns.find(function (element) {
                 return element.requestId === details.requestId
             }).state = details.statusCode
@@ -112,8 +116,16 @@
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.command === "getAjaxReadyData") {
             sendResponse(document.getAjaxReadyData());
+
         }
     });
+
+    function getTabTitle(tabId) {
+        let tabTitle = '';
+        chrome.tabs.get(tabId, function (tab) {
+            tab.title
+        })
+    }
 
 })();
 
