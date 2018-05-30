@@ -4,6 +4,7 @@
     }
 
     document.AjaxConns = [];
+
     document.getAjaxReadyStatus = function () {
         let state = false;
         document.AjaxConns.forEach(function (value, index) {
@@ -17,7 +18,6 @@
     document.getAjaxReadyData = function () {
         return JSON.stringify(document.AjaxConns);
     };
-
 
     document.addAjaxConn = function (conn) {
         document.AjaxConns.push(conn)
@@ -121,6 +121,7 @@
     });
 
     function getTabTitle(tabId) {
+        debugger;
         let tabTitle = '';
         chrome.tabs.get(tabId, function (tab) {
             tab.title

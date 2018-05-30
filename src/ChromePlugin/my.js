@@ -1,81 +1,105 @@
-/*
- this.requestId = "";
- this.timeOpen = "";
- this.timeSendReq = "";
- this.timeRep = "";
- this.timeClose = "";
- this.Url = "";
- this.RedirectUrl = "";
- this.state = ""
-*/
-google.charts.load('current', {'packages': ['timeline']});
-google.charts.setOnLoadCallback(Init);
+GoodYear = {
+    requestDatas: [],
+    timeLineTable: [],
+    initTimeLineChart: function () {
 
-function getTimeRunning() {
-    var min = 0, max = 0;
-    Raws.forEach(function (item) {
-        console.log(item[0] + " " + (item[1] - item[2]));
-        if (min > item[1]) {
-            min = item[1]
-        }
-        if (min === 0) {
-            min = item[1]
-        }
-        if (max < item[2]) {
-            max = item[2]
-        }
-    });
-    console.log(min);
-    console.log(max);
-    console.log(max - min)
-}
+        let container = document.getElementById('timeline');
+        let chart = new google.visualization.Timeline(container);
+        let dataTable = new google.visualization.DataTable();
 
-function Init() {
-    chrome.runtime.sendMessage({command: "getAjaxReadyData"}, function (response) {
-        let timeLineTable = [];
-        let reJ = JSON.parse(response);
-        if (Array.isArray(reJ)) {
-            reJ.forEach(
-                function (element) {
-                    if (element.timeOpen && element.timeClose) {
-                        timeLineTable.push(
-                            [
-                                "ReqID: " + element.requestId,
-                                new Date(element.timeOpen),
-                                new Date(element.timeClose)
-                            ]
-                        );
-                    }
+        dataTable.addColumn({type: 'string', id: 'Conn'});
+        dataTable.addColumn({type: 'date', id: 'Start'});
+        dataTable.addColumn({type: 'date', id: 'End'});
+
+
+        GoodYear.requestDatas.forEach(
+            function (ele) {
+                if (ele.timeOpen && ele.timeClose) {
+                    GoodYear.timeLineTable.push(
+                        [
+                            ele.Url,
+                            new Date(ele.timeOpen),
+                            new Date(ele.timeClose)
+                        ]
+                    );
                 }
-            );
-            drawChart(timeLineTable);
+            }
+        );
+
+
+        dataTable.addRows(GoodYear.timeLineTable);
+
+        chart.draw(dataTable);
+    },
+    getRequestData: function () {
+        chrome.runtime.sendMessage({command: "getAjaxReadyData"}, function (response) {
+            GoodYear.requestDatas = JSON.parse(response);
+            GoodYear.onRequestDateReady.fire();
+        });
+    },
+    onRequestDateReady: {
+        DataReadyHandlers: [],
+        addListener: function (callback) {
+            GoodYear.onRequestDateReady.DataReadyHandlers.push(callback)
+        },
+        fire: function () {
+            GoodYear.onRequestDateReady.DataReadyHandlers.forEach(function (callbacks) {
+                callbacks();
+                q = TAFFY(GoodYear.requestDatas);
+            })
+        }
+    },
+    draw: function () {
+        GoodYear.getRequestData();
+        GoodYear.onRequestDateReady.addListener(function () {
+            GoodYear.initTimeLineChart();
+        })
+    },
+    statistics: {}
+};
+TAFFY.extend("avg", function (c) {
+    // This runs the query or returns the results if it has already run
+    this.context({
+        results: this.getDBI().query(this.context())
+    });
+    // setup the sum
+    var total = 0;
+    // loop over every record in the results and sum up the column.
+    TAFFY.each(this.context().results, function (r) {
+        if (r.timeClose !== "" && r.timeOpen !== "") {
+            console.log((r.timeClose - r.timeOpen));
+            total = total + (r.timeClose - r.timeOpen);
         }
 
     });
 
-}
+    // divide the total by the number of records and return
+    return total / this.context().results.length;
+});
+TAFFY.extend("SamplingTime", function (c) {
+    this.context({
+        results: this.getDBI().query(this.context())
+    });
 
-function drawChart(tablearray) {
-    let container = document.getElementById('timeline');
-    let chart = new google.visualization.Timeline(container);
-    let dataTable = new google.visualization.DataTable();
+    var start, end;
 
-    dataTable.addColumn({type: 'string', id: 'Conn'});
-    dataTable.addColumn({type: 'date', id: 'Start'});
-    dataTable.addColumn({type: 'date', id: 'End'});
-    dataTable.addRows(tablearray);
-    // Res=[
-    //     ['conn 318953', new Date(1527610850611), new Date(1527610850612)],
-    //     ['conn 318952', new Date(1527610850633), new Date(1527610850637)],
-    //     ['conn 318951', new Date(1527610850652), new Date(1527610851659)]];
+    TAFFY.each(this.context().results, function (r) {
+        if (start == null) {
+            start = r.timeOpen;
+        }
+        if (end == null) {
+            end = r.timeClose;
+        }
+        if (r.timeOpen < start) {
 
-    // dataTable.addRows(Res)
+        }
+        if (r.timeClose > end) {
+            end = r.timeClose;
+        }
+    });
+    return (end - start) / 1000;
+});
+var q;
 
-    // dataTable.addRows([
-    //         ["conn 1243", new Date("2018-05-29T15:08:49"), new Date("2018-05-29T15:08:49")],
-    //         ["conn 1244", new Date("2018-05-29T15:08:49"), new Date("2018-05-29T15:08:49")],
-    //         ["conn 1245", new Date("2018-05-29T15:08:49"), new Date("2018-05-29T15:08:49")]
-    //     ]
-    // );
-    chart.draw(dataTable);
-}
+google.charts.load('current', {'packages': ['timeline']});
+google.charts.setOnLoadCallback(GoodYear.draw);

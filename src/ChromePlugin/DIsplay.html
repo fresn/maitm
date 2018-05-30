@@ -1,10 +1,29 @@
 <html>
 <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link href="js/Jqui/jquery-ui.css" rel="stylesheet">
+    <script src="js/Jqui/external/jquery/jquery.js"></script>
+    <script src="js/Jqui/jquery-ui.js"></script>
+    <script src="js/taffy.js"></script>
     <script type="text/javascript" src="my.js"></script>
 </head>
 <body>
-<div id="timeline" style="height: 500px;"></div>
-
+<aside style="width: 28%">
+    <table>
+        <thead>
+        <tr>#Samples</tr>
+        <tr>Avg.ResponseTime</tr>
+        <tr>90%Line(ms)</tr>
+        <tr>95%Line(ms)</tr>
+        <tr>99%Line(ms)</tr>
+        <tr>Min.ResponseTime</tr>
+        <tr>Max.ResponseTime</tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</aside>
+<div id="container" class="container" style="width: 69%">
+    <div id="timeline" style="height: 500px;"></div>
+</div>
 </body>
 </html>
